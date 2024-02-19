@@ -49,11 +49,3 @@ FEEDS = {
 ## Limitations
 - The `overwrite` feed option is fixed to `True`, meaning each export will replace the existing file at the specified URI. Use with caution to avoid unintended data loss.
 - This storage backend uses [delayed file delivery](https://docs.scrapy.org/en/latest/topics/feed-exports.html#delayed-file-delivery).
-
-
-
-
-
-
-
-
