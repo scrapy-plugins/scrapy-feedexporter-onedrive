@@ -39,7 +39,12 @@ class OneDriveFeedStorage(BlockingFeedStorage):
     def _create_session(self, file_path):
         session_endpoint = f"/me/drive/root:/{file_path}:/createUploadSession"
         response = requests.post(GRAPH_API_ENDPOINT + session_endpoint, headers=self.session_headers)
-        return response.json()['uploadUrl']
+        try:
+            return response.json()['uploadUrl']
+        except Exception as e:
+            raise NotConfigured(
+                f"Failed to create the upload Session: {e}. Response: {response.content}"
+            )
 
     def _store_in_thread(self, file):
         file.seek(0)
