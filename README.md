@@ -26,9 +26,7 @@ FEED_STORAGES = {
 }
 ```
 
-2. Configure authentication by providing an access token with read and write permission to the user's OneDrive files. The OneDrive API uses the standard `OAuth 2.0` authorization framework, to obtain an access token, please refer to the [Microsoft OneDrive API documentation](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth?view=odsp-graph-online) and follow the steps described.
-
-For example:
+2. Configure authentication by providing an access token with permission to read and write the user's OneDrive files, as exemplified below. To obtain the access token using the standard `OAuth 2.0` authorization framework of the OneDrive API, please follow the steps described in the [Microsoft OneDrive API documentation](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth?view=odsp-graph-online).
 
 ```python
 # settings.py
