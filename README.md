@@ -22,7 +22,7 @@ Follow these steps to use the OneDrive Feed Storage with Scrapy:
 ```
 # settings.py
 FEED_STORAGES = {
-    'onedrive': scrapy_onedrive_exporter.onedrive_exporter.OneDriveFeedStorage
+    'onedrive': 'scrapy_onedrive_exporter.onedrive_exporter.OneDriveFeedStorage'
 }
 ```
 
