@@ -50,7 +50,7 @@ class OneDriveFeedStorage(BlockingFeedStorage):
         file.seek(0)
         content = file.read()
         content_range = f"bytes 0-{len(content) - 1}/{len(content)}"
-        headers = {'Content-Length': str(len(content)), 'Content-Range': content_range}
+        headers = {'Content-Range': content_range}
         response = requests.put(self.session_url, headers=headers, data=content)
         if not response.ok:
             raise NotConfigured(f"Failed to upload the file to OneDrive: {response.content}")
