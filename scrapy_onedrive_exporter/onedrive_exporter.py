@@ -1,4 +1,5 @@
 import logging
+from json.decoder import JSONDecodeError
 
 import requests
 from scrapy.exceptions import NotConfigured
@@ -41,7 +42,7 @@ class OneDriveFeedStorage(BlockingFeedStorage):
         response = requests.post(GRAPH_API_ENDPOINT + session_endpoint, headers=self.session_headers)
         try:
             return response.json()['uploadUrl']
-        except Exception as e:
+        except (KeyError, JSONDecodeError) as e:
             raise NotConfigured(
                 f"Failed to create the upload Session: {e}. Response: {response.content}"
             )
