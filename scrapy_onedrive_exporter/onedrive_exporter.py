@@ -25,7 +25,7 @@ class OneDriveFeedStorage(BlockingFeedStorage):
             'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json'
         }
-        self.file_path = uri.split("://")[-1]
+        self.file_path = uri.split("://", max_split=1)[-1]
         self.session_url = self._create_session(self.file_path)
 
     @classmethod
