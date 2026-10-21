@@ -3,11 +3,13 @@ from json.decoder import JSONDecodeError
 
 import requests
 from scrapy.exceptions import NotConfigured
-from scrapy.extensions.feedexport import BlockingFeedStorage, build_storage
+from scrapy.extensions.feedexport import BlockingFeedStorage
 
 logger = logging.getLogger(__name__)
 
 GRAPH_API_ENDPOINT = "https://graph.microsoft.com/v1.0"
+SESSION_TIMEOUT = 60
+UPLOAD_TIMEOUT = 600
 
 
 class OneDriveFeedStorage(BlockingFeedStorage):
@@ -22,16 +24,15 @@ class OneDriveFeedStorage(BlockingFeedStorage):
             )
 
         self.session_headers = {
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json'
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
         }
-        self.file_path = uri.split("://", max_split=1)[-1]
+        self.file_path = uri.split("://", maxsplit=1)[-1]
         self.session_url = self._create_session(self.file_path)
 
     @classmethod
     def from_crawler(cls, crawler, uri, *, feed_options=None):
-        return build_storage(
-            cls,
+        return cls(
             uri,
             access_token=crawler.settings.get("ONEDRIVE_ACCESS_TOKEN"),
             feed_options=feed_options,
@@ -39,21 +40,29 @@ class OneDriveFeedStorage(BlockingFeedStorage):
 
     def _create_session(self, file_path):
         session_endpoint = f"/me/drive/root:/{file_path}:/createUploadSession"
-        response = requests.post(GRAPH_API_ENDPOINT + session_endpoint, headers=self.session_headers)
+        response = requests.post(
+            GRAPH_API_ENDPOINT + session_endpoint,
+            headers=self.session_headers,
+            timeout=SESSION_TIMEOUT,
+        )
         try:
-            return response.json()['uploadUrl']
+            return response.json()["uploadUrl"]
         except (KeyError, JSONDecodeError) as e:
             raise NotConfigured(
                 f"Failed to create the upload Session: {e}. Response: {response.content}"
-            )
+            ) from e
 
     def _store_in_thread(self, file):
         file.seek(0)
         content = file.read()
         content_range = f"bytes 0-{len(content) - 1}/{len(content)}"
-        headers = {'Content-Range': content_range}
-        response = requests.put(self.session_url, headers=headers, data=content)
+        headers = {"Content-Range": content_range}
+        response = requests.put(
+            self.session_url, headers=headers, data=content, timeout=UPLOAD_TIMEOUT
+        )
         if not response.ok:
-            raise NotConfigured(f"Failed to upload the file to OneDrive: {response.content}")
+            raise NotConfigured(
+                f"Failed to upload the file to OneDrive: {response.content}"
+            )
         logger.info(f"Feed file uploaded to OneDrive: {response.json()['webUrl']}")
         file.close()
