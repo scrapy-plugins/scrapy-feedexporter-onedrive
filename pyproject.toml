@@ -1,6 +1,6 @@
 [project]
 name = "scrapy-feedexporter-onedrive"
-version = "0.0.0"
+version = "0.1.0"
 description = "Scrapy Feed Exporter Storage Backend to export items to Microsoft OneDrive"
 authors = [
     {name = "Scrapy developers"},
@@ -38,7 +38,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.bumpversion]
-current_version = "0.0.0"
+current_version = "0.1.0"
 commit = true
 tag = true
 tag_name = "{new_version}"
